@@ -26,8 +26,11 @@ jobs:
       # Step 2: Add upstream repository and fetch
       - name: Fetch upstream repository
         run: |
+         if ! git remote | grep -q upstream; then
           git remote add upstream https://github.com/${{ env.UPSTREAM_REPO }}.git
-          git fetch upstream ${{ env.UPSTREAM_BRANCH }}
+         fi
+         git fetch upstream ${{ env.UPSTREAM_BRANCH }}
+
 
       # Step 3: Check for updates
       - name: Check for updates
