@@ -45,10 +45,12 @@ jobs:
 
       # Step 4: Sync with upstream if updates are found
       - name: Sync with upstream
-        if: ${{ env.needs_sync == 'true' }}  # 通过环境变量进行条件判断
-        uses: aormsby/Fork-Sync-With-Upstream-action@v3.4.1
-        with:
-          upstream_sync_repo: ${{ env.UPSTREAM_REPO }}
-          upstream_sync_branch: ${{ env.UPSTREAM_BRANCH }}
-          target_sync_branch: ${{ env.UPSTREAM_BRANCH }}
-          target_repo_token: ${{ secrets.GITHUB_TOKEN }}
+        if: ${{ env.needs_sync == 'true' }}
+        run: |
+         git remote add upstream https://github.com/${{ env.UPSTREAM_REPO }}.git
+         git fetch upstream ${{ env.UPSTREAM_BRANCH }}
+         git checkout ${{ env.UPSTREAM_BRANCH }}
+         git merge upstream/${{ env.UPSTREAM_BRANCH }} --no-commit
+         git reset HEAD .github/workflows
+         git commit -m "Sync with upstream"
+         git push origin ${{ env.UPSTREAM_BRANCH }}
